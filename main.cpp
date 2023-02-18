@@ -21,7 +21,7 @@ int main() {
 	probtype PT;
 	// Initial data and parameters to read in
 	ifstream initfile;
-	initfile.open ("exact.ini");
+	initfile.open ("input.txt");
 	initfile>>PT.testcase; cout<<PT.testcase<<"\n";
 	initfile>>domLEN;          // Domain length 
 	initfile>>diaph;           // Initial disontinuity position
@@ -68,11 +68,16 @@ int main() {
 
 	Real dx=domLEN/n, x, s;
 	Real DS,US,PS;
-	int lw=10; // Line-width for outputting data
+	int lw=20; // Line-width for outputting data
 
 	// Complete solution at time=timeout is found
+	string fname;
+	stringstream ss;
+	ss<<setw(4)<<setfill('0')<<timeout;
+	string time=ss.str();
+	fname = "./data/"+PT.testcase+"_t"+time+".dat";
 	ofstream Wdata;
-	Wdata.open("exact.out");
+	Wdata.open(fname);
 	for (int i=0;i<n;i++) {
 		x=((i+1)-0.5)*dx;
 		s=(x-diaph)/timeout; // Sampling in terms of spedd s=x/t
@@ -83,5 +88,10 @@ int main() {
 			US<<setw(lw)<<PS/PT.MPA<<setw(lw)<<PS/DS/PT.G[8]/PT.MPA<<" \n";		
 	}
 	Wdata.close ();
+
+	// Plot data
+	string command="python3 plotdata.py " + to_string(n);
+        cout<<command<<endl;
+        system(command.c_str());
 
 }
