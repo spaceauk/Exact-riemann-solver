@@ -9,7 +9,7 @@ using namespace std;
 
 #include "defs.hpp"
 Real GUESSP(probtype& PT);
-void PREFUN(Real *F,Real *FD,Real P,Real DK,Real PK,Real CK
+void PREFUN(Real *F,Real *FD,Real *FDD,Real P,Real DK,Real PK,Real CK
                 ,probtype& PT);
 
 
@@ -31,10 +31,18 @@ void STARPU(Real *P, Real *U, probtype& PT) {
 
 	int NRiter=20; // Newton-Raphson iteration for pressure
 	Real FL,FLD,FR,FRD,Change;
+	Real FLDD,FRDD;
 	for (int i=0;i<NRiter;i++) {
-		PREFUN(&FL,&FLD,pOld,dL,pL,cL,PT);
-		PREFUN(&FR,&FRD,pOld,dR,pR,cR,PT);
-		*P=pOld-(FL+FR+Udiff)/(FLD+FRD);    // Eq. 4.44
+		PREFUN(&FL,&FLD,&FLDD,pOld,dL,pL,cL,PT);
+		PREFUN(&FR,&FRD,&FRDD,pOld,dR,pR,cR,PT);
+		if (PT.itertype=="1st") {
+			*P=pOld-(FL+FR+Udiff)/(FLD+FRD);    // Eq. 4.44
+		} else if (PT.itertype=="2nd") {
+			Real f=FL+FR+Udiff;
+			Real fprime=FLD+FRD;
+			Real fpprime=FLDD+FRDD;
+			*P=pOld-(2*f*fprime)/(2*pow(fprime,2)-f*fpprime);
+		}
 		Change=2.0*abs((*P-pOld)/(*P+pOld)); // Eq. 4.45
 		cout<<"NR at i="<<i<<" where change="<<Change<<"\n";
 		if (Change<=eps) {break;}

@@ -9,7 +9,8 @@ class probtype{
 		string testcase;
 		Real flowP[9];
 		Real G[9];	
-		Real MPA;	
+		Real MPA;
+		string itertype;	
 };
 
 

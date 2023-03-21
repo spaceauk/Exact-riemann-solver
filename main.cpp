@@ -23,6 +23,12 @@ int main() {
 	ifstream initfile;
 	initfile.open ("input.txt");
 	initfile>>PT.testcase; cout<<PT.testcase<<"\n";
+	initfile>>PT.itertype;     // Iteration type
+	if (PT.itertype=="1st") {
+		cout<<"Newton-Raphson method"<<endl;
+	} else if (PT.itertype=="2nd") {
+		cout<<"Halley's method"<<endl;
+	}		
 	initfile>>domLEN;          // Domain length 
 	initfile>>diaph;           // Initial disontinuity position
 	initfile>>n;               // # of computing cells
